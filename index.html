@@ -584,20 +584,22 @@ const DATA = {
   ]
 };
 
-const STORE_KEY = "bokki2:progress:v2";
+const STORE_KEY = "bokki2_progress_v2";
 let progress = {}; // { "商業簿記|0": {correct:bool, seen:bool}, ... }
 let state = { cat:"商業簿記", mode:"quiz", unitFilter:"__all__", qIdx:0, order:[], answered:false, flashIdx:0 };
 
 function qid(cat, idx){ return cat + "|" + idx; }
 
+// Uses the browser's own localStorage so progress survives closing the app/tab.
+// (Falls back to an in-memory object if storage is unavailable, e.g. private browsing.)
 async function loadProgress(){
   try{
-    const res = await window.storage.get(STORE_KEY, false);
-    progress = res && res.value ? JSON.parse(res.value) : {};
+    const raw = localStorage.getItem(STORE_KEY);
+    progress = raw ? JSON.parse(raw) : {};
   }catch(e){ progress = {}; }
 }
 async function saveProgress(){
-  try{ await window.storage.set(STORE_KEY, JSON.stringify(progress), false); }catch(e){}
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(progress)); }catch(e){}
 }
 
 function currentList(){
