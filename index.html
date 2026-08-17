@@ -653,16 +653,14 @@ function populateUnitSelect(){
 }
 
 function renderMeta(){
-  const cats = Object.keys(DATA);
-  let correct=0, total=0;
-  cats.forEach(cat=>{
-    DATA[cat].forEach((q,i)=>{
-      const p = progress[qid(cat,i)];
-      if(p && p.seen){ total++; if(p.correct) correct++; }
-    });
+  const catQuestions = DATA[state.cat];
+  let correct=0, seen=0;
+  catQuestions.forEach((q,i)=>{
+    const p = progress[qid(state.cat,i)];
+    if(p && p.seen){ seen++; if(p.correct) correct++; }
   });
-  document.getElementById('metaTotal').textContent = `正答 ${correct} / ${total}`;
-  document.getElementById('metaRate').textContent = total ? `正答率 ${Math.round(correct/total*100)}%` : '正答率 —';
+  document.getElementById('metaTotal').textContent = `${state.cat}：解答 ${seen}/${catQuestions.length}問（正答 ${correct}）`;
+  document.getElementById('metaRate').textContent = seen ? `正答率 ${Math.round(correct/seen*100)}%` : '正答率 —';
 }
 
 function renderSummary(){
